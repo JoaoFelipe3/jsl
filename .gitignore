@@ -1,0 +1,4 @@
+# rust compilation directory
+target
+# test file i use
+test.jsl
