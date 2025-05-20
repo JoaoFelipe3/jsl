@@ -10,7 +10,8 @@ pub(crate) fn run_ast(
     stack: &mut Vec<Value>,
     vars: &mut HashMap<String, Value>,
 ) -> JSLResult<()> {
-    for statement in ast {
+    let mut iter = ast.into_iter().peekable();
+    while let Some(statement) = iter.next() {
         match statement {
             Statement::Binding(id) => {
                 // ok these ones have default values
@@ -43,7 +44,11 @@ pub(crate) fn run_ast(
                 }
                 Primitive::Call => match stack.pop().unwrap_or(Value::Null) {
                     Value::Function(ast) => {
-                        run_ast(ast, stack, &mut (*vars).clone())?;
+                        if iter.clone().peek().is_some() {
+                            run_ast(ast, stack, &mut (*vars).clone())?;
+                        } else {
+                            iter = ast.into_iter().peekable(); // tail recursion!
+                        }
                     }
                     _ => {
                         return Err(JSLError {
