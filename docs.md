@@ -42,10 +42,17 @@ All bindings made inside functions are local, which means they will not persist 
 This function behaves differently depending on the types of the inputs:
 * Two strings: will get concatenated.
 * A string and a number: the number gets joined to either the start or end of the string, depending on the stack order.
-* Two lists: will get joined. This can be useful if you want a list joined as its own entry on another list.
+* Two lists: will get joined.
 * A list and a value: the value gets joined to either the start or end of the list, depending on the stack order.
 * Two functions: the functions will get composed. (yes i know you can build arbitrary code with this)
 * Anything else, or insufficient values: this will error.
+
+## Pair: `,`
+Takes two values from the stack (uses `∅` if insufficient) and puts them into a list of two elements.
+You can use this to make an "if-statement":
+```
+{"true"}{"false"}⭥,⭥⤉!
+```
 
 ## Index: `⤉`
 Uses a number to index a list or string below it. This will error if the number is not an integer.

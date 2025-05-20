@@ -58,7 +58,7 @@ impl fmt::Debug for Value {
             Value::List(l) => {
                 write!(f, "[ ")?;
                 for e in l {
-                    write!(f, "{e} ")?;
+                    write!(f, "{e:?} ")?;
                 }
                 write!(f, "]")
             }
@@ -76,7 +76,7 @@ impl fmt::Display for Value {
             Value::List(l) => {
                 write!(f, "[ ")?;
                 for e in l {
-                    write!(f, "{e} ")?;
+                    write!(f, "{e:?} ")?;
                 }
                 write!(f, "]")
             }

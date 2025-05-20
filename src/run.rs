@@ -98,6 +98,11 @@ pub(crate) fn run_ast(
                         });
                     }
                 },
+                Primitive::Pair => {
+                    let a = stack.pop().unwrap_or(Value::Null);
+                    let b = stack.pop().unwrap_or(Value::Null);
+                    stack.push(Value::List(vec![a, b]));
+                }
                 Primitive::Index => {
                     match (stack.pop() /* index */, stack.pop() /* target */) {
                         (Some(Value::Number(i)), Some(Value::List(l))) => {

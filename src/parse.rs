@@ -27,7 +27,7 @@ impl fmt::Debug for Token {
     }
 }
 
-const SYMBOLS: &str = "{}∅□.:⭥!”⤉↗→+-×÷=";
+const SYMBOLS: &str = "{}∅□.:⭥!”,⤉↗→+-×÷=";
 const DIGITS: &str = "0123456789";
 
 // bulk of the logic
