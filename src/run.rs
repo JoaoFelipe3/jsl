@@ -45,7 +45,8 @@ pub(crate) fn run_ast(
                 Primitive::Call => match stack.pop().unwrap_or(Value::Null) {
                     Value::Function(ast) => {
                         if iter.clone().peek().is_some() {
-                            run_ast(ast, stack, &mut (*vars).clone())?;
+                            run_ast(ast, stack, &mut (*vars).clone())?; // same stack reference,
+                        // new vars reference
                         } else {
                             iter = ast.into_iter().peekable(); // tail recursion!
                         }
@@ -151,8 +152,22 @@ pub(crate) fn run_ast(
                         stack.push(Value::Number(x + y))
                     }
                     (Some(x), Some(y)) => {
+                        let use_join_hint = match (x.type_str(), y.type_str()) {
+                            ("string", "string") => true,
+                            ("list", "list") => true,
+                            _ => false,
+                        };
                         return Err(JSLError {
-                            msg: format!("cannot add {} and {}", x.type_str(), y.type_str()),
+                            msg: format!(
+                                "cannot add {} and {}{}",
+                                x.type_str(),
+                                y.type_str(),
+                                if use_join_hint {
+                                    ". perhaps you meant to use ” join?"
+                                } else {
+                                    ""
+                                }
+                            ),
                         });
                     }
                     _ => {
