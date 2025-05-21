@@ -11,18 +11,6 @@ pub enum Value {
     Null,
 }
 
-impl PartialEq for Value {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Value::Number(x), Value::Number(y)) => x == y,
-            (Value::String(x), Value::String(y)) => x == y,
-            (Value::List(x), Value::List(y)) => x == y,
-            (Value::Null, Value::Null) => true,
-            _ => false,
-        }
-    }
-}
-
 impl Value {
     pub fn type_str(&self) -> &str {
         match self {
@@ -35,10 +23,31 @@ impl Value {
     }
 }
 
+impl PartialEq for Value {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Value::Number(x), Value::Number(y)) => x == y,
+            (Value::String(x), Value::String(y)) => x == y,
+            (Value::List(x), Value::List(y)) => x == y,
+            (Value::Null, Value::Null) => true,
+            _ => false,
+        }
+    }
+}
+
 impl fmt::Debug for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Value::Number(n) => write!(f, "{n}"),
+            Value::Number(n) => {
+                if n.is_infinite() {
+                    if n.is_sign_negative() {
+                        write!(f, "-")?;
+                    }
+                    write!(f, "∞")
+                } else {
+                    write!(f, "{n}")
+                }
+            }
             Value::String(s) => {
                 write!(f, "\"")?;
                 for c in s.chars() {
@@ -70,17 +79,8 @@ impl fmt::Debug for Value {
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Value::Number(n) => write!(f, "{n}"),
             Value::String(s) => write!(f, "{s}"),
-            Value::Function(_) => write!(f, "{{…}}"),
-            Value::List(l) => {
-                write!(f, "[ ")?;
-                for e in l {
-                    write!(f, "{e:?} ")?;
-                }
-                write!(f, "]")
-            }
-            Value::Null => write!(f, "∅"),
+            _ => write!(f, "{self:?}"),
         }
     }
 }
